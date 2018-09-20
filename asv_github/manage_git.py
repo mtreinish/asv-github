@@ -10,6 +10,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import os
 import subprocess
 
 
@@ -20,6 +21,9 @@ class ASVRepo(object):
 
     def clone_repo(self):
         """Clone a repo."""
+        git_path = os.path.join(self.local_path, '.git')
+        if os.path.isdir(git_path):
+            raise OSError('Git repo already cloned')
         cmd = ['git', 'clone', self.source, self.local_path]
         subprocess.call(cmd)
 
