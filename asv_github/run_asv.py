@@ -18,6 +18,7 @@ import multiprocessing
 class ASVWorker(multiprocessing.Process):
 
     def __init__(self, queue, html_dir):
+        super(ASVWorker, self).__init__()
         self.queue = queue
         self.html_dir = html_dir
 
@@ -25,9 +26,9 @@ class ASVWorker(multiprocessing.Process):
         while True:
             repo = self.queue.get()
             cwd = repo.local_path
-            repo.repo.pull()
+            repo.pull()
             asv_run_new(cwd)
-            asv_publish(cwd)
+            asv_publish(cwd, self.html_dir)
 
 
 def asv_publish(cwd, html_dir):

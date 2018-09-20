@@ -10,17 +10,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import git
+import subprocess
 
 class ASVRepo:
-    def __init__(self, local_path, source, repo):
-        self.repo = repo
+    def __init__(self, local_path, source):
         self.source = source
         self.local_path = local_path
 
+    def clone_repo(self):
+        """Clone a repo."""
+        cmd = ['git', 'clone', self.source, self.local_path]
+        subprocess.call(cmd)
 
-def clone_repo(source, local_dest):
-    """Clone a repo."""
-    repo = git.Git(local_dest)
-    repo.clone(source)
-    return ASVRepo(local_dest, source, repo)
+    def pull(self):
+        cmd = ['git', 'pull']
+        subprocess.call(cmd, cwd=self.local_path)

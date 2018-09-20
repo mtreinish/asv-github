@@ -71,7 +71,6 @@ def setup():
     global ASV_QUEUE
     if not CONFIG:
         load_config()
-    run_asv.setup_machine()
     run_asv.ASVWorker(ASV_QUEUE, CONFIG['api']['html-dir']).start()
 
 
@@ -96,26 +95,30 @@ def list_routes():
 def get_local_repo(name, git_url):
     """Handle creating a new local repo for benchmarking."""
     local_path = os.path.join(CONFIG['api']['git-dir'], name)
-    REPOS[name] = manage_git.clone_repo(git_url, local_path)
+    REPOS[name] = manage_git.ASVRepo(local_path, git_url)
     return REPOS[name]
 
 
 @WEBHOOK.hook()
-def on_push(body):
+def on_push(data):
+    """Handle github WEBHOOK pushes."""
+
     global REPOS
     global ASV_MACHINE
     global ASV_QUEUE
-    data = json.loads(body)
-    """Handle github WEBHOOK pushes."""
+    import pprint
+    pprint.pprint(data)
+#    data = json.loads(body)
     repo_name = data['repository']['full_name']
-    git_url = data['git_url']
+    git_url = data['repository']['git_url']
     if repo_name not in REPOS:
         local_repo = get_local_repo(repo_name, git_url)
+        local_repo.clone_repo()
         if not ASV_MACHINE:
             run_asv.setup_machine(local_repo.local_path)
             ASV_MACHINE = True
     else:
-        local_repo = REPOS['repo_name']
+        local_repo = REPOS[repo_name]
     ASV_QUEUE.put(local_repo)
 
 
