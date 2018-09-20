@@ -12,7 +12,8 @@
 
 import subprocess
 
-class ASVRepo:
+
+class ASVRepo(object):
     def __init__(self, local_path, source):
         self.source = source
         self.local_path = local_path
