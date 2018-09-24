@@ -42,7 +42,13 @@ def _asv_run(commits, cwd):
 
 
 def asv_run_new(cwd):
+    """Run asv for new commits."""
     _asv_run('NEW', cwd)
+
+
+def asv_run_all(cwd):
+    """Run asv for all commits."""
+    _asv_run('ALL', cwd)
 
 
 def setup_machine(cwd, name=None, os=None, arch=None, cpu=None, ram=None):
